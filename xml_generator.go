@@ -3,6 +3,7 @@ package plist
 import (
 	"bufio"
 	"encoding/base64"
+	"encoding/xml"
 	"io"
 	"math"
 	"strconv"
@@ -45,6 +46,7 @@ type xmlPlistGenerator struct {
 	depth      int
 	putNewline bool
 	lineLength int
+	escape     bool
 }
 
 func (p *xmlPlistGenerator) generateDocument(root cfValue) {
@@ -86,7 +88,14 @@ func (p *xmlPlistGenerator) element(n string, v string) {
 		p.WriteString(n)
 		p.WriteByte('>')
 
-		p.WriteString(v)
+		if p.escape {
+			err := xml.EscapeText(p.Writer, []byte(v))
+			if err != nil {
+				panic(err)
+			}
+		} else {
+			p.WriteString(v)
+		}
 
 		p.WriteString("</")
 		p.WriteString(n)
@@ -194,9 +203,16 @@ func (p *xmlPlistGenerator) writeIndent(delta int) {
 	}
 }
 
-func (p *xmlPlistGenerator) Indent(i string, ll int) {
+func (p *xmlPlistGenerator) Indent(i string) {
 	p.indent = i
+}
+
+func (p *xmlPlistGenerator) LineLength(ll int) {
 	p.lineLength = ll
+}
+
+func (p *xmlPlistGenerator) Escape(b bool) {
+	p.escape = b
 }
 
 func newXMLPlistGenerator(w io.Writer) *xmlPlistGenerator {

@@ -202,8 +202,7 @@ func (p *textPlistGenerator) writePlistValue(pval cfValue) {
 	}
 }
 
-func (p *textPlistGenerator) Indent(i string, ll int) {
-	// ignore the line length for this format
+func (p *textPlistGenerator) Indent(i string) {
 	p.indent = i
 	if i == "" {
 		p.dictKvDelimiter = []byte(`=`)
@@ -211,6 +210,14 @@ func (p *textPlistGenerator) Indent(i string, ll int) {
 		// For pretty-printing
 		p.dictKvDelimiter = []byte(` = `)
 	}
+}
+
+func (p *textPlistGenerator) LineLength(ll int) {
+	//  Maximum Line Length is ignored for textPlist
+}
+
+func (p *textPlistGenerator) Escape(b bool) {
+	//  Escaping is ignored for textPlist
 }
 
 func newTextPlistGenerator(w io.Writer, format int) *textPlistGenerator {

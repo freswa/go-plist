@@ -10,7 +10,9 @@ import (
 
 type generator interface {
 	generateDocument(cfValue)
-	Indent(string, int)
+	Indent(string)
+	LineLength(int)
+	Escape(bool)
 }
 
 // An Encoder writes a property list to an output stream.
@@ -20,6 +22,7 @@ type Encoder struct {
 
 	indent     string
 	lineLength int
+	escape     bool
 }
 
 // Encode writes the property list encoding of v to the stream.
@@ -47,7 +50,9 @@ func (p *Encoder) Encode(v interface{}) (err error) {
 	case OpenStepFormat, GNUStepFormat:
 		g = newTextPlistGenerator(p.writer, p.format)
 	}
-	g.Indent(p.indent, p.lineLength)
+	g.Indent(p.indent)
+	g.LineLength(p.lineLength)
+	g.Escape(p.escape)
 	g.generateDocument(pval)
 	return
 }

@@ -292,8 +292,16 @@ func (p *bplistGenerator) writeArrayTag(arr []cfValue) {
 	}
 }
 
-func (p *bplistGenerator) Indent(i string, ll int) {
-	// There's nothing to indent and nothing to set a line length for
+func (p *bplistGenerator) Indent(i string) {
+	// There's nothing to indent
+}
+
+func (p *bplistGenerator) LineLength(ll int) {
+	//  Maximum Line Length is ignored for bplist
+}
+
+func (p *bplistGenerator) Escape(b bool) {
+	//  Escaping is ignored for bplist
 }
 
 func newBplistGenerator(w io.Writer) *bplistGenerator {
