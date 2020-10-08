@@ -3,7 +3,6 @@ package plist
 import (
 	"bufio"
 	"encoding/base64"
-	"encoding/xml"
 	"io"
 	"math"
 	"strconv"
@@ -73,8 +72,8 @@ func (p *xmlPlistGenerator) closeTag(n string) {
 }
 
 func (p *xmlPlistGenerator) element(n string, v string) {
-	if p.lineLength > 0 && len(v) > 0 {
-		p.elementWithLineLength(n, v)
+	if p.lineLength > 0 && n == xmlDataTag {
+		p.elementLineLength(n, v)
 		return
 	}
 	p.writeIndent(0)
@@ -87,10 +86,7 @@ func (p *xmlPlistGenerator) element(n string, v string) {
 		p.WriteString(n)
 		p.WriteByte('>')
 
-		err := xml.EscapeText(p.Writer, []byte(v))
-		if err != nil {
-			panic(err)
-		}
+		p.WriteString(v)
 
 		p.WriteString("</")
 		p.WriteString(n)
@@ -98,7 +94,7 @@ func (p *xmlPlistGenerator) element(n string, v string) {
 	}
 }
 
-func (p *xmlPlistGenerator) elementWithLineLength(n string, v string) {
+func (p *xmlPlistGenerator) elementLineLength(n string, v string) {
 	p.openTag(n)
 
 	var upperBound int
