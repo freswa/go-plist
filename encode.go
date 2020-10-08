@@ -68,6 +68,11 @@ func (p *Encoder) LineLength(lineLength int) {
 	p.lineLength = lineLength
 }
 
+// Escape can disable xml escaping for elements in the XMLFormat
+func (p *Encoder) Escape(escape bool) {
+	p.escape = escape
+}
+
 // NewEncoder returns an Encoder that writes an XML property list to w.
 func NewEncoder(w io.Writer) *Encoder {
 	return NewEncoderForFormat(w, XMLFormat)
