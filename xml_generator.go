@@ -7,6 +7,7 @@ import (
 	"io"
 	"math"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -72,7 +73,7 @@ func (p *xmlPlistGenerator) closeTag(n string) {
 }
 
 func (p *xmlPlistGenerator) element(n string, v string) {
-	if p.lineLength > 0 && n == xmlDataTag {
+	if p.lineLength > 0 && len(v) > 0 {
 		p.elementWithLineLength(n, v)
 		return
 	}
@@ -107,6 +108,11 @@ func (p *xmlPlistGenerator) elementWithLineLength(n string, v string) {
 		upperBound = (i + 1) * p.lineLength
 		if upperBound > len(v) {
 			upperBound = len(v)
+		}
+		// if there is already in newline in the next segment, we don't screw it up
+		if strings.Contains(v[i*p.lineLength:upperBound], "\n") {
+			p.WriteString(v[i*p.lineLength : upperBound])
+			continue
 		}
 		p.writeIndent(0)
 		p.WriteString(v[i*p.lineLength : upperBound])
